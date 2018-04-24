@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const findOrCreate = require('mongoose-findorcreate');
 
 let FileSchema = new mongoose.Schema({
     path: {
@@ -11,7 +12,7 @@ let FileSchema = new mongoose.Schema({
     }
 });
 
-
+FileSchema.plugin(findOrCreate);
 
 let File = mongoose.model('File', FileSchema);
 

@@ -95,21 +95,42 @@ export default class Stream {
 
     addToDb(){
         let path = this.path.split('/');
-        let expiration = Date.now() + 2592000;
+        let now = new Date();
+        let expire = new Date();
+        expire = expire.setMonth(now.getMonth() + 1);
 
         path.pop();
 
-        File.create({path: path, expire: expiration}, (err, res) => {
-            if (err){
+        File.findOrCreate({ path: path.join("/") }, { path: path.join("/"), expire: expire }, function (err, res) {
+            if (err) {
                 console.log(err);
             }
+            if (res) {
+                File.update({ _id : res.id }, { $set :  { expire : expire } }, (err) => {
+                    if (err) {
+                        console.log(err);
+                    }
+                })
+            }
         });
-
-        File.find({}, (err, res) => {
+        console.log(now.getTime());
+        File.find({ expire : { $lt : now.getTime() }}, (err, res) => {
             if (err){
                 console.log(err);
             }
             console.log(res);
+            res.map(async (e) => {
+                if ((await fs.existsSync(e.path))) {
+                    console.log("bateau");
+                    let files = await fs.readdirSync(e.path);
+                    await Promise.all(files.map(async (elem) => {
+                        if (await fs.existsSync(`${e.path}/${elem}`)){
+                            await fs.unlinkSync(`${e.path}/${elem}`);
+                        }
+                    }));
+                    await fs.rmdirSync(e.path);
+                }
+            });
         })
     }
     
