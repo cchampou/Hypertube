@@ -70,7 +70,6 @@ export default class Stream {
             engine.on('download', async (index) => {
                 if (!this.started && await this.canPlay(socket)) {
                     this.started = true;
-                    console.log("BUFFER ON CANPLaY", JSON.stringify(this.engine.bitfield.buffer));
 
                     try {
                         resolve(await this.createPlayList(res, req, socket));
@@ -138,7 +137,6 @@ export default class Stream {
                         let index = string.findIndex(elem => elem.includes('time') && elem.includes('='));
 
                         if (index !== -1){
-                            console.log(string[index]);
                             let time = string[index].split('=')[1].split(':')
                             let seconds = Math.round(time.pop());
 
