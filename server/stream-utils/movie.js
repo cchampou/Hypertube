@@ -89,7 +89,9 @@ export default class Movie {
 
                     if (file){
                         srt2vtt(file, async (err, data) => {
-                            await fs.writeFileSync(`/tmp/sub/${elem.imdbid}_${elem.lang}.vtt`, data);
+                            if (!err) {
+                                await fs.writeFileSync(`/tmp/sub/${elem.imdbid}_${elem.lang}.vtt`, data);
+                            }
                             resolve();
                         });
                     } else {
