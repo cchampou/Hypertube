@@ -37,7 +37,7 @@ router.post('/', multer(multerConf).single('avatar'), (req, res) => {
     let user = new User(body);
     var regularExpression = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$/;
     if (!regularExpression.test(body.password)) {
-        return res.status(400).send('password not secure')
+        return res.status(400).send('Password not secure')
     }
     user.hashPassword(body.password).then((hash) => {
     user.password = hash;
@@ -45,7 +45,7 @@ router.post('/', multer(multerConf).single('avatar'), (req, res) => {
     }).then(() => {
         user.save((err) => {
             if (err) {
-                return res.status(400).send('Email adress already exist');
+                return res.status(400).send('Email address or username already exists');
             }
             res.status(200).send(user);
         })
@@ -81,27 +81,27 @@ router.patch('/', [authenticate, multer(multerConf).single('avatar')], async (re
     let user = new User(body);
     if (body.password !== undefined) {
         if (!regularExpression.test(body.password)) {
-            return res.status(400).send('password not secure')
+            return res.status(400).send('Password not secure')
         }
         try {
             body.password = await user.hashPassword(body.password);
         } catch(err) {
-            res.status(404).send('password not saved')
+            res.status(404).send('Password not saved')
         }
     }
     if (!ObjectID.isValid(id)) {
-        return res.status(404).send('wrong ID');
+        return res.status(404).send('Invalid user');
     }
     User.findByIdAndUpdate(id, { $set: body }, { new: true, runValidators: true }).then((user) => {
         if (!user) {
-            return res.status(404).send(`can\'t find ${id}`)
+            return res.status(404).send(`Can\'t find ${id}`)
         }
         res.status(200).send(user);
     }).catch((e) => {
         console.log(e);
         if (e.code === 11000)
             return res.status(400).send('User already exist');
-        return res.status(400).send('Problem updating user');
+        return res.status(400).send('There was a issue updating user');
     })
  });
 
@@ -114,11 +114,11 @@ router.delete('/', authenticate, (req, res) => {
     }
     User.findByIdAndRemove(id).then((user) => {
         if (!user) {
-            return res.status(404).send(`${id} , doesen\'t exist`);
+            return res.status(404).send(`${id} , doesn\'t exist`);
         }
         res.status(200).send(`${user.username} has been removed`);
     }).catch((err) => {
-        return res.status(400).send('user not removed, bad request');
+        return res.status(400).send('User not removed, bad request');
     })
 });
 
