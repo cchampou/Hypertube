@@ -37,7 +37,6 @@ export default class Stream {
                     return null;
                 }
             } else {
-                console.log("NO MAGNET FOUND");
             }
         }
     }
@@ -113,15 +112,12 @@ export default class Stream {
                 })
             }
         });
-        console.log(now.getTime());
         File.find({ expire : { $lt : now.getTime() }}, (err, res) => {
             if (err){
                 console.log(err);
             }
-            console.log(res);
             res.map(async (e) => {
                 if ((await fs.existsSync(e.path))) {
-                    console.log("bateau");
                     let files = await fs.readdirSync(e.path);
                     await Promise.all(files.map(async (elem) => {
                         if (await fs.existsSync(`${e.path}/${elem}`)){
@@ -195,7 +191,6 @@ export default class Stream {
                     this.converter.on('error', error => console.log("ERROR OCCURED", error));
                     this.converter.on('close', code => {
                         this.sent = false;
-                        console.log("EXITED WITH", code);
                         if (code !== 255) {
                             reject();
                         }

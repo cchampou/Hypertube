@@ -43,9 +43,6 @@ export default class Movie {
 
     async deleteStream(index) {
         let found = this.stream.findIndex(elem => elem.id === index);
-
-        console.log("FOUND", found);
-        console.log(this.stream);
         if (found !== -1){
             this.stopConverterAndEngine(found);
             this.stream.splice(found, 1);
@@ -120,7 +117,6 @@ export default class Movie {
 
                     let request = http.get(elem.url, (res) => {
                         res.on('end', () => {
-                            console.log("HTMl ReS END");
                             file.end();
                             resolve();
                         });
@@ -128,7 +124,7 @@ export default class Movie {
                         res.on('data', (data) => file.write(data));
                     });
 
-                    request.on('error', (error) => console.log("REQUEST ERRROR", error));
+                    request.on('error', (error) => { });
                 } else {
                     resolve();
                 }

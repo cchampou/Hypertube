@@ -29,7 +29,6 @@ router.get('/42/redirect',
 
 router.post('/local',
     passport.authenticate('local', { session: false, }), (req,res) => {
-        console.log(req.user);
         res.status(200).send(req.user);
     });
 
