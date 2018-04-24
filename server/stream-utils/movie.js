@@ -118,7 +118,9 @@ export default class Movie {
                     let request = http.get(elem.url, (res) => {
                         res.on('end', () => {
                             file.end();
-                            resolve();
+                            file.on('close', () => {
+                                resolve();
+                            })
                         });
 
                         res.on('data', (data) => file.write(data));
