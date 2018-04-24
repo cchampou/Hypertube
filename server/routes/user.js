@@ -6,7 +6,6 @@ const jwt = require('jsonwebtoken');
 
 const multer = require('multer');
 const multerConf = require('./../middleware/upload.js')
-const gmailPass = require('../config/keys.js').gmail.pass;
 
 const { mongoose } = require('./../database/mongoose.js');
 const { User } = require('./../models/user.js');
