@@ -62,7 +62,6 @@ passport.use(new FortyTwoStrategy({
             lastName: profile.name.familyName,
             avatar: profile.photos[0].value
         }, function (err, user) {
-            console.log(user);
             if (err) {
                 console.log(err);
                 cb(err, user);

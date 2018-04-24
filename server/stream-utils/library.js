@@ -87,8 +87,6 @@ export default class Library {
                         const torrents = await torrentSearch.search(`${elem.original_title}`, 'Movies');
 
                         if (!torrents[0] || parseInt(torrents[0].seeds, 10) < 50) {
-
-                            // console.log("TO DELETE", elem.original_title, index);
                             toDelete.push(elem.original_title);
                         }
                     }));

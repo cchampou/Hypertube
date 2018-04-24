@@ -159,8 +159,6 @@ router.post('/forget', (req, res) => {
                         return res.status(400).send('mail not sent');
                     }
                     res.status(200).send('email sent');
-                    // console.log('Message sent: %s', info.messageId);
-                    // console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
                 });
             });
         });
@@ -176,7 +174,6 @@ router.post('/reset', async (req, res) => {
     if (!regularExpression.test(body.password)) {
         return res.status(400).send('password not secure')
     }
-    console.log(body.token);
     User.findOne({ 'forgetPassToken': body.token }, async (err, user) => {
         if (user) {
             try {

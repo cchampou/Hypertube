@@ -6,7 +6,7 @@ import process from 'child_process';
 
 let _ = require('lodash');
 let torrentSearch = new (require('torrent-search-api'));
-
+let {File} = require('../models/file.js');
 
 torrentSearch.enableProvider('Torrent9');
 torrentSearch.enableProvider('1337x');
@@ -37,7 +37,6 @@ export default class Stream {
                     return null;
                 }
             } else {
-                console.log("NO MAGNET FOUND");
             }
         }
     }
@@ -70,8 +69,7 @@ export default class Stream {
             engine.on('download', async (index) => {
                 if (!this.started && await this.canPlay(socket)) {
                     this.started = true;
-                    console.log("BUFFER ON CANPLaY", JSON.stringify(this.engine.bitfield.buffer));
-
+                    this.addToDb();
                     try {
                         resolve(await this.createPlayList(res, req, socket));
                     } catch (e) {
@@ -94,6 +92,44 @@ export default class Stream {
 
     }
 
+    addToDb(){
+        let path = this.path.split('/');
+        let now = new Date();
+        let expire = new Date();
+        expire = expire.setMonth(now.getMonth() + 1);
+
+        path.pop();
+
+        File.findOrCreate({ path: path.join("/") }, { path: path.join("/"), expire: expire }, function (err, res) {
+            if (err) {
+                console.log(err);
+            }
+            if (res) {
+                File.update({ _id : res.id }, { $set :  { expire : expire } }, (err) => {
+                    if (err) {
+                        console.log(err);
+                    }
+                })
+            }
+        });
+        File.find({ expire : { $lt : now.getTime() }}, (err, res) => {
+            if (err){
+                console.log(err);
+            }
+            res.map(async (e) => {
+                if ((await fs.existsSync(e.path))) {
+                    let files = await fs.readdirSync(e.path);
+                    await Promise.all(files.map(async (elem) => {
+                        if (await fs.existsSync(`${e.path}/${elem}`)){
+                            await fs.unlinkSync(`${e.path}/${elem}`);
+                        }
+                    }));
+                    await fs.rmdirSync(e.path);
+                }
+            });
+        })
+    }
+    
     async createPlayList(res, req, socket){
         return new Promise(async (resolve, reject) => {
             try {
@@ -138,7 +174,6 @@ export default class Stream {
                         let index = string.findIndex(elem => elem.includes('time') && elem.includes('='));
 
                         if (index !== -1){
-                            console.log(string[index]);
                             let time = string[index].split('=')[1].split(':')
                             let seconds = Math.round(time.pop());
 
@@ -156,7 +191,6 @@ export default class Stream {
                     this.converter.on('error', error => console.log("ERROR OCCURED", error));
                     this.converter.on('close', code => {
                         this.sent = false;
-                        console.log("EXITED WITH", code);
                         if (code !== 255) {
                             reject();
                         }

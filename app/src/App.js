@@ -71,8 +71,8 @@ class App extends Component {
 	}
 
 	componentDidMount() {
-		this.randomize(false);
-		setInterval(() => this.randomize(false), 60000);
+		this.randomize(true);
+		setInterval(() => this.randomize(true), 60000);
 	}
 
 	render () {

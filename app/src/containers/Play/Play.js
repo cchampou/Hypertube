@@ -77,11 +77,11 @@ class Play extends Component {
 
 		if (this.props.lang !== lang){
 			if (this.state.received) {
-				console.log("DESROY HERE");
                 this.state.received.destroy();
-                socket.emit('deleteStream', this.state.uniqId);
+                socket.emit('destroyStream', null);
             }
-			received = false;
+            this.setState({converting: 0, downloading: 0, received: false});
+			// received = false;
 		}
 
 		if (this.props.username && this.props.lang && this.props[this.props.lang].title && this.props[this.props.lang].release_date && !received){
@@ -125,7 +125,6 @@ class Play extends Component {
 
 
 	renderTracks(player){
-		console.log(player);
 		if (this.state.subList) {
             return this.state.subList.map((elem, index) => {
                 if (elem && player.props[elem]) {

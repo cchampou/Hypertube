@@ -23,12 +23,10 @@ module.exports = (io) => {
 
         this.socket = socket;
         socket.on('disconnect', (index) => {
-            console.log("DisCONNECTED SOCKET", socket.id);
             test.deleteStream(socket.id);
         });
 
         socket.on('destroyStream', () => {
-            console.log("DEsTROY", socket.id);
             test.deleteStream(socket.id)
         });
 
@@ -82,17 +80,13 @@ module.exports = (io) => {
     });
 
     router.get("/sub/:query", async (req, res) => {
-        console.log("SUBREQ", req.url);
 
         let imdbid = req.url.split('/').pop().split('_').splice(0, 1);
 
         if (!await fs.existsSync("/tmp" + req.url)){
             await test.getSrt(imdbid);
-            console.log("AFTER GET SRT", await fs.existsSync("/tmp" + req.url));
         } else {
-            console.log("VTT ALREADY EXISTS");
         }
-        console.log("SEND", '/tmp' + req.url);
        res.sendFile("/tmp" + req.url);
     });
 
