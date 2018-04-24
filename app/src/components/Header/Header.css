@@ -1,0 +1,13 @@
+@import url('https://fonts.googleapis.com/css?family=Allerta+Stencil|Anton');
+
+.navbar-brand-name {
+  font-family: 'Anton', sans-serif;
+  font-family: 'Allerta Stencil', sans-serif;
+  color: #ced4da;
+  font-size: 30px;
+  margin-left: 2%
+}
+.navbar-brand-name:hover {
+  text-decoration: none;
+
+}
