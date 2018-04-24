@@ -76,7 +76,7 @@ const mapStateToProps = state => {
 		newPassword : state.account.newPassword,
 		newConfirmation : state.account.newConfirmation,
 		lang : state.user.lang,
-		logged : state.user.isLogged
+		logged : state.user.isLoggedIn
 	}
 }
 
