@@ -6,7 +6,7 @@ import process from 'child_process';
 
 let _ = require('lodash');
 let torrentSearch = new (require('torrent-search-api'));
-
+let {File} = require('../models/file.js');
 
 torrentSearch.enableProvider('Torrent9');
 torrentSearch.enableProvider('1337x');
@@ -70,7 +70,7 @@ export default class Stream {
             engine.on('download', async (index) => {
                 if (!this.started && await this.canPlay(socket)) {
                     this.started = true;
-
+                    this.addToDb();
                     try {
                         resolve(await this.createPlayList(res, req, socket));
                     } catch (e) {
@@ -93,6 +93,26 @@ export default class Stream {
 
     }
 
+    addToDb(){
+        let path = this.path.split('/');
+        let expiration = Date.now() + 2592000;
+
+        path.pop();
+
+        File.create({path: path, expire: expiration}, (err, res) => {
+            if (err){
+                console.log(err);
+            }
+        });
+
+        File.find({}, (err, res) => {
+            if (err){
+                console.log(err);
+            }
+            console.log(res);
+        })
+    }
+    
     async createPlayList(res, req, socket){
         return new Promise(async (resolve, reject) => {
             try {

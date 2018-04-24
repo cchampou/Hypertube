@@ -11,7 +11,6 @@ let FileSchema = new mongoose.Schema({
     }
 });
 
-VideoSchema.plugin(findOrCreate);
 
 
 let File = mongoose.model('File', FileSchema);
