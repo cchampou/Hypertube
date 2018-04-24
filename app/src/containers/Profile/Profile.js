@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import profile from '../../assets/img/profile.svg';
 import Loading from '../../utils/Loader';
+import { Redirect } from 'react-router-dom';
 import * as actionTypes from '../../store/actions/actionTypes';
 
 import * as lang from './Profile.lang'
@@ -9,12 +10,15 @@ import * as lang from './Profile.lang'
 class Profile extends Component {
 
     componentDidMount() {
-        this.props.getProfile(this.props.match.params.id);
+        if (this.props.logged) {
+            this.props.getProfile(this.props.match.params.id);
+        }
     }
 
     render () {
         return (
             <div className="container-fluid">
+                {!this.props.logged && <Redirect to="/" />}
                 <div className="row justify-content-center mt-5">
                     <div className="col-lg-4 col-md-6 col-sm-10 bg-dark text-center p-4">
                         {(this.props.loading)?
@@ -39,7 +43,8 @@ class Profile extends Component {
 
 const mapStateToProps = state => ({
     profile : state.profile,
-    lang : state.user.lang
+    lang : state.user.lang,
+    logged : state.user.isLoggedIn
 });
 
 const mapDispatchToProps = dispatch => ({

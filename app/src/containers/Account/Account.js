@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
+import { Redirect } from 'react-router-dom';
 import { processAccount, resetAccount } from '../../store/actions/account';
 
 import AccountForm from '../../components/AccountForm/AccountForm';
@@ -43,6 +43,7 @@ class Account extends Component {
 	render() {
 		return (
 			<div className="container-fluid" id="loginBG">
+				{!this.props.logged && <Redirect to="/" />}
 				<div className="row justify-content-center">
 					<div className="col-lg-8 col-md-8 col-sm-10 my-5">
 						<AccountForm
@@ -74,7 +75,8 @@ const mapStateToProps = state => {
 		newEmail : state.account.newEmail,
 		newPassword : state.account.newPassword,
 		newConfirmation : state.account.newConfirmation,
-		lang : state.user.lang
+		lang : state.user.lang,
+		logged : state.user.isLogged
 	}
 }
 

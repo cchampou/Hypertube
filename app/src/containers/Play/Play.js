@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Link, Redirect } from 'react-router-dom'
 
 import FontAwesomeIcon from '@fortawesome/react-fontawesome'
 import faStar from '@fortawesome/fontawesome-free-solid/faStar'
@@ -49,17 +49,18 @@ class Play extends Component {
 	}
 
 	componentDidMount () {
-        this.props.markMovieSeen(this.props.match.params.id);
-        this.props.resetComment();
-        this.props.getMovie(this.props.match.params.id);
-        this.props.getCasting(this.props.match.params.id);
-
-        socket.on('downloading', percentage => this.setState({downloading: Math.round(percentage)}));
-        socket.on('converting', percentage => this.setState({converting: Math.round(percentage)}));
-        socket.on('subList', list => {
-        	this.setState({subList: list})
-		});
-    }
+		if (this.props.logged) {
+			this.props.markMovieSeen(this.props.match.params.id);
+			this.props.resetComment();
+			this.props.getMovie(this.props.match.params.id);
+			this.props.getCasting(this.props.match.params.id);
+			socket.on('downloading', percentage => this.setState({downloading: Math.round(percentage)}));
+			socket.on('converting', percentage => this.setState({converting: Math.round(percentage)}));
+			socket.on('subList', list => {
+				this.setState({subList: list})
+			});
+		}
+	}
 
 	componentWillUnmount (){
 	    this.props.reset();
@@ -155,6 +156,7 @@ class Play extends Component {
 
 		return (
 			<div className="container">
+			{!this.props.logged && <Redirect to="/" />}
 				<div className="row my-4">
 					<div className="col">
 						<div className="row py-4 bg-dark">
@@ -231,7 +233,8 @@ const mapStateToProps = state => {
 		comment : state.play.comment,
 		success : state.play.success,
 		fail : state.play.fail,
-		username : state.user.username
+		username : state.user.username,
+		logged : state.user.isLoggedIn
 	}
 }
 
